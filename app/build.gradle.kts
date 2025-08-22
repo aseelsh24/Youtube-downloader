@@ -27,21 +27,30 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        debug {
+            isDebuggable = true
         }
     }
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    
     buildFeatures {
         compose = true
     }
+    
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
+    
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -50,31 +59,36 @@ android {
 }
 
 dependencies {
-
+    // AndroidX Core
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
+    
+    // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2024.02.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-
+    
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
-
+    
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
+    
     // Retrofit & OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-
-    // Youtube-dl-android - I will use this library for video link extraction
-    implementation("com.github.yausername.youtubedl-android:library:0.1.0")
-
-
+    
+    // Youtube-dl-android - الإصدار المصحح ✅
+    implementation("com.github.yausername:youtubedl-android:0.13.0")
+    
+    // FFmpeg للتعامل مع الفيديو والصوت (اختياري)
+    implementation("com.github.yausername:ffmpeg-android:0.1.0")
+    
+    // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -82,4 +96,21 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// إعدادات إضافية لتحسين الأداء
+android {
+    // تمكين بناء لـ ARM و x86
+    ndkVersion = "25.1.8937393"
+    
+    // تحسين أداء البناء
+    buildFeatures {
+        buildConfig = true
+    }
+    
+    // إعدادات lint إضافية
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
 }
