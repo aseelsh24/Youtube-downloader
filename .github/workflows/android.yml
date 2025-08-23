@@ -7,7 +7,16 @@ on:
     branches: [ "main" ]
   release:
     types: [published]
-  workflow_dispatch:   # 👈 يسمح بتشغيل الـ workflow يدويًا من GitHub Actions
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Choose build type'
+        required: true
+        default: 'Release'
+        type: choice
+        options:
+          - Debug
+          - Release
 
 jobs:
   build:
@@ -23,17 +32,23 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Decode Keystore
+    - name: Decode Keystore (for Release only)
+      if: ${{ github.event.inputs.build_type == 'Release' }}
       run: |
-        echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > release.jks
+        mkdir -p app
+        echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > app/release.jks
 
-    - name: Build with Gradle (Signed)
+    - name: Build with Gradle
       run: |
-        ./gradlew clean assembleRelease \
-          -Pandroid.injected.signing.store.file=release.jks \
-          -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
-          -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-          -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+        if [ "${{ github.event.inputs.build_type }}" == "Release" ]; then
+          ./gradlew clean assembleRelease \
+            -Pandroid.injected.signing.store.file=app/release.jks \
+            -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+        else
+          ./gradlew clean assembleDebug
+        fi
 
     - name: Find and upload APK
       run: |
@@ -49,11 +64,11 @@ jobs:
     - name: Upload APK as Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: app-release
+        name: ${{ github.event.inputs.build_type }}-apk
         path: ${{ env.APK_PATH }}
 
-    - name: Upload APK to GitHub Release
-      if: github.event_name == 'release'
+    - name: Upload APK to GitHub Release (Release only)
+      if: github.event_name == 'release' && github.event.inputs.build_type == 'Release'
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ env.APK_PATH }}
