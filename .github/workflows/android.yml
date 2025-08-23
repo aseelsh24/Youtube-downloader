@@ -22,33 +22,40 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        gradle-version: 8.4
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
     - name: Build with Gradle
-      run: ./gradlew assembleRelease --refresh-dependencies
+      run: |
+        # Try to find the correct gradle command
+        if [ -f "gradlew" ]; then
+          ./gradlew assembleRelease
+        elif [ -f "./app/gradlew" ]; then
+          cd app && ./gradlew assembleRelease
+        else
+          # Use globally installed gradle
+          gradle assembleRelease --refresh-dependencies
+        fi
 
-    - name: List build outputs (for debugging)
-      run: find . -name "*.apk" -type f
+    - name: Find and upload APK
+      run: |
+        # Search for APK files in common locations
+        APK_PATH=$(find . -name "*.apk" -type f | head -1)
+        if [ -n "$APK_PATH" ]; then
+          echo "Found APK at: $APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+        else
+          echo "No APK files found"
+          exit 1
+        fi
 
-    # Upload APK to Artifacts
     - name: Upload APK as Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-release
-        path: app/build/outputs/apk/**/*.apk
-        if-no-files-found: error
+        path: ${{ env.APK_PATH }}
 
-    # Upload APK to Release
     - name: Upload APK to GitHub Release
       if: github.event_name == 'release'
       uses: softprops/action-gh-release@v1
       with:
-        files: app/build/outputs/apk/**/*.apk
+        files: ${{ env.APK_PATH }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
