@@ -72,7 +72,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Youtube-dl-android - I will use this library for video link extraction
-    implementation("com.github.yausername.youtubedl-android:library:0.1.0")
+    implementation("com.github.yausername:youtubedl-android:0.13.0")
 
 
     testImplementation("junit:junit:4.13.2")
