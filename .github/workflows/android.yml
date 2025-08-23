@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
   release:
-    types: [published]   # يشغل الـ workflow عند إنشاء Release جديد
+    types: [published]   # Runs workflow when a new Release is created
 
 jobs:
   build:
@@ -30,14 +30,14 @@ jobs:
     - name: Build with Gradle
       run: gradle assembleRelease --refresh-dependencies
 
-    # رفع APK للـ Artifacts (يظهر في صفحة Actions)
+    # Upload APK to Artifacts (appears in Actions page)
     - name: Upload APK as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # Changed from v3 to v4
       with:
         name: app-release
         path: app/build/outputs/apk/release/app-release.apk
 
-    # رفع APK للـ Release (يظهر في قسم Releases)
+    # Upload APK to Release (appears in Releases section)
     - name: Upload APK to GitHub Release
       if: github.event_name == 'release'
       uses: softprops/action-gh-release@v1
