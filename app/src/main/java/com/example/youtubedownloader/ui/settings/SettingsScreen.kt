@@ -41,7 +41,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = 
                 title = { Text(stringResource(id = R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
