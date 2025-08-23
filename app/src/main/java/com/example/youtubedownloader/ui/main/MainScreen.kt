@@ -7,6 +7,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Settings
@@ -35,10 +37,10 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 title = { Text(stringResource(id = R.string.app_name)) },
                 actions = {
                     IconButton(onClick = { navController.navigate("downloads") }) {
-                        Icon(imageVector = Icons.Default.Download, contentDescription = stringResource(id = R.string.downloads))
+                        Icon(imageVector = Icons.Filled.Download, contentDescription = stringResource(id = R.string.downloads))
                     }
                     IconButton(onClick = { navController.navigate("settings") }) {
-                        Icon(imageVector = Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+                        Icon(imageVector = Icons.Filled.Settings, contentDescription = stringResource(id = R.string.settings))
                     }
                 }
             )

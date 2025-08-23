@@ -34,7 +34,7 @@ fun DownloadScreen(navController: NavController, viewModel: DownloadViewModel = 
                 title = { Text(stringResource(id = R.string.downloads)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -84,14 +84,14 @@ fun DownloadItemRow(download: DownloadItem, onCancel: () -> Unit) {
                             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
                             context.startActivity(Intent.createChooser(shareIntent, "Share File"))
                         }) {
-                            Icon(imageVector = Icons.Default.Share, contentDescription = stringResource(id = R.string.share))
+                            Icon(imageVector = Icons.Filled.Share, contentDescription = stringResource(id = R.string.share))
                         }
                     }
                     is DownloadStatus.Failed -> Text(stringResource(id = R.string.download_failed), color = MaterialTheme.colorScheme.error)
                 }
             }
             IconButton(onClick = onCancel) {
-                Icon(imageVector = Icons.Default.Cancel, contentDescription = stringResource(id = R.string.cancel))
+                Icon(imageVector = Icons.Filled.Cancel, contentDescription = stringResource(id = R.string.cancel))
             }
         }
     }
