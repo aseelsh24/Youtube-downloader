@@ -23,7 +23,7 @@ class VideoInfoExtractor {
                     formatId = format.formatId ?: "",
                     ext = format.ext ?: "",
                     resolution = format.height?.let { "${it}p" } ?: "Audio",
-                    fileSize = format.filesize ?: format.filesizeApprox ?: 0,
+                    fileSize = format.filesize ?: 0,
                     url = format.url!!,
                     isAudioOnly = format.acodec != "none" && format.vcodec == "none"
                 )
